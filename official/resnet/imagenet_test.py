@@ -186,7 +186,6 @@ class BaseTest(tf.test.TestCase):
             'data_format': 'channels_last',
             'batch_size': _BATCH_SIZE,
             'version': version,
-            'multi_gpu': multi_gpu,
         })
 
     predictions = spec.predictions
