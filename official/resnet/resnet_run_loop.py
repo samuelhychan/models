@@ -30,7 +30,6 @@ import os
 import tensorflow as tf
 from tensorflow.contrib.distribute.python import mirrored_strategy
 from tensorflow.contrib.distribute.python import one_device_strategy
-from tensorflow.python.client import device_lib
 from tensorflow.python.training import distribute as distribute_lib
 
 from official.resnet import resnet_model
@@ -343,30 +342,6 @@ def compute_per_device_batch_size(batch_size, use_distribution_strategy,
   return batch_size
 
 
-def assign_multi_gpu(flags):
-  """Set flag if multi-GPU training is called for.
-
-  Args:
-    flags: The parsed namespace for a run.
-
-  Raises:
-    ValueError: if gpus_for_distribution_strategy is invalid.
-  """
-  local_device_protos = device_lib.list_local_devices()
-  num_gpus = sum([1 for d in local_device_protos if d.device_type == 'GPU'])
-
-  if (flags.use_distribution_strategy and
-      flags.gpus_for_distribution_strategy > 1):
-    if flags.gpus_for_distribution_strategy > num_gpus:
-      raise ValueError('{} GPUs specified, only {} detected.'.format(
-          flags.gpus_for_distribution_strategy,
-          num_gpus
-      ))
-    vars(flags)['multi_gpu'] = True
-  else:
-    vars(flags)['multi_gpu'] = False
-
-
 def resnet_main(flags, model_function, input_function, shape=None):
   """Shared main loop for ResNet Models.
 
@@ -384,9 +359,6 @@ def resnet_main(flags, model_function, input_function, shape=None):
 
   # Using the Winograd non-fused algorithms provides a small performance boost.
   os.environ['TF_ENABLE_WINOGRAD_NONFUSED'] = '1'
-
-  # TODO(taylorrobie@): remove when per_device is no longer needed.
-  assign_multi_gpu(flags)
 
   # Create session config based on values of inter_op_parallelism_threads and
   # intra_op_parallelism_threads. Note that we default to having
@@ -476,22 +448,10 @@ def resnet_main(flags, model_function, input_function, shape=None):
       benchmark_logger.log_estimator_evaluation_result(eval_results)
 
   if flags.export_dir is not None:
-    warn_on_multi_gpu_export(flags.multi_gpu)
-
     # Exports a saved model for the given classifier.
     input_receiver_fn = export.build_tensor_serving_input_receiver_fn(
         shape, batch_size=flags.batch_size)
     classifier.export_savedmodel(flags.export_dir, input_receiver_fn)
-
-
-def warn_on_multi_gpu_export(multi_gpu=False):
-  """For the time being, multi-GPU mode does not play nicely with exporting."""
-  if multi_gpu:
-    tf.logging.warning(
-        'You are exporting a SavedModel while in multi-GPU mode. Note that '
-        'the resulting SavedModel will require the same GPUs be available.'
-        'If you wish to serve the SavedModel from a different device, '
-        'try exporting the SavedModel with multi-GPU mode turned off.')
 
 
 class ResnetArgParser(argparse.ArgumentParser):
