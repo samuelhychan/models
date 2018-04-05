@@ -118,7 +118,7 @@ class BaseParser(argparse.ArgumentParser):
           metavar="<BS>"
       )
 
-    # TODO(taylorrobie@): depricate and only use DistributionStrategies
+    # TODO(taylorrobie@): deprecate and only use DistributionStrategies
     if multi_gpu:
       self.add_argument(
           "--multi_gpu", action="store_true",
@@ -152,7 +152,7 @@ class PerformanceParser(argparse.ArgumentParser):
                intra_op=True, use_synthetic_data=True, max_train_steps=True):
     super(PerformanceParser, self).__init__(add_help=add_help)
 
-    # TODO(taylorrobie@): depricate and only use DistributionStrategies
+    # TODO(taylorrobie@): deprecate and only use DistributionStrategies
     if num_parallel_calls:
       self.add_argument(
           "--num_parallel_calls", "-npc",

@@ -136,7 +136,7 @@ def get_synth_input_fn(height, width, num_channels, num_classes):
     An input_fn that can be used in place of a real one to return a dataset
     that can be used for iteration.
   """
-  def input_fn(is_training, data_dir, batch_size,  # pylint: disable=unused-argument
+  def input_fn(is_training, data_dir, batch_size,  # pylint: disable=unused-argument, missing-docstring
                use_distribution_strategy=False,
                gpus_for_distribution_strategy=1, *args, **kwargs):  # pylint: disable=unused-argument
     # TODO(taylorrobie@) cull DistributionStrategies uses global batch size
@@ -293,7 +293,7 @@ def resnet_model_fn(features, labels, mode, model_class,
     accuracy = tf.metrics.accuracy(
         tf.argmax(labels, axis=1), predictions['classes'])
   else:
-    # Metrics are currently no compatible with distribution strategies
+    # Metrics are currently not compatible with distribution strategies
     accuracy = (tf.no_op(), tf.constant(0))
 
   metrics = {'accuracy': accuracy}
