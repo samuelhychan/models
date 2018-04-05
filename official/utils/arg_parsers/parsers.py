@@ -152,6 +152,7 @@ class PerformanceParser(argparse.ArgumentParser):
                intra_op=True, use_synthetic_data=True, max_train_steps=True):
     super(PerformanceParser, self).__init__(add_help=add_help)
 
+    # TODO(taylorrobie@): depricate and only use DistributionStrategies
     if num_parallel_calls:
       self.add_argument(
           "--num_parallel_calls", "-npc",
@@ -216,12 +217,14 @@ class DistributionStrategiesParser(argparse.ArgumentParser):
     super(DistributionStrategiesParser, self).__init__(add_help=add_help)
 
     self.add_argument(
-        "--use_distribution_strategy", action="store_true",
+        "--use_distribution_strategy", "-uds",
+        action="store_true",
         help="If set, use the DistributionStrategies API."
     )
 
     self.add_argument(
-        "--gpus_for_distribution_strategy", type=int, default=2,
+        "--gpus_for_distribution_strategy", "-gds",
+        type=int, default=2,
         help="[default: %(default)s] How many GPUs to use with the "
              "DistributionStrategies API.",
         metavar="<GDS>"
