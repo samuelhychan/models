@@ -172,7 +172,7 @@ class BaseTest(tf.test.TestCase):
   def test_tensor_shapes_resnet_200_with_gpu_v2(self):
     self.tensor_shapes_helper(200, version=2, with_gpu=True)
 
-  def resnet_model_fn_helper(self, mode, version, multi_gpu=False):
+  def resnet_model_fn_helper(self, mode, version):
     """Tests that the EstimatorSpec is given the appropriate arguments."""
     tf.train.create_global_step()
 
@@ -213,14 +213,6 @@ class BaseTest(tf.test.TestCase):
 
   def test_resnet_model_fn_train_mode_v2(self):
     self.resnet_model_fn_helper(tf.estimator.ModeKeys.TRAIN, version=2)
-
-  def test_resnet_model_fn_train_mode_multi_gpu_v1(self):
-    self.resnet_model_fn_helper(tf.estimator.ModeKeys.TRAIN, version=1,
-                                multi_gpu=True)
-
-  def test_resnet_model_fn_train_mode_multi_gpu_v2(self):
-    self.resnet_model_fn_helper(tf.estimator.ModeKeys.TRAIN, version=2,
-                                multi_gpu=True)
 
   def test_resnet_model_fn_eval_mode_v1(self):
     self.resnet_model_fn_helper(tf.estimator.ModeKeys.EVAL, version=1)
